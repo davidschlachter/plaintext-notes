@@ -49,10 +49,11 @@ router.get('/getNotes', function(req,res,next) {
 
 	for (let i = 0; i < currentNotes.length; i++) {
 		if (currentNotes[i].includes("README")) continue
+		if (currentNotes[i].includes(".stfolder")) continue
 		noteText = fs.readFileSync("notes/"+currentNotes[i],'utf8')
 		noteTitle= currentNotes[i].split("-").slice(0, currentNotes[i].split("-").length - 1).join("-")
 		noteID   = currentNotes[i].split("-").pop()
-		notes.push({"noteID":noteID, "noteTitle":noteTitle, "noteText":sanitize(noteText)})
+		notes.push({"noteID":noteID, "noteTitle":sanitize(noteTitle), "noteText":sanitize(noteText)})
 	}
 	console.log(" Sending notes:"); for (let i = 0; i < notes.length; i++) {console.log(notes[i].noteID+" "+notes[i].noteTitle)}
 	
@@ -78,15 +79,7 @@ function dateSort(a,b) {
 
 // https://stackoverflow.com/a/26482552
 function removeSpecials(str) {
-	var lower = str.toLowerCase()
-	var upper = str.toUpperCase()
-
-	var res = ""
-	for(var i=0; i<lower.length; ++i) {
-		if(lower[i] != upper[i] || lower[i].trim() === '')
-			res += str[i]
-		}
-	return res.replace(/ /g,"-").toLowerCase()
+  return str.replace(/[/\\?%*:|"<>]/g, '-').replace(/ /g, "-").toLowerCase()
 }
 
 function sanitize(string) {
