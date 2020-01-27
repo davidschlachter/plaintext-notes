@@ -42,6 +42,9 @@ router.get('/getNotes', function(req,res,next) {
 	let noteText  = ""
 	let noteID    = ""
 
+	// need to return the notes in reverse chronological order
+	currentNotes.sort(dateSort)
+
 	for (let i = 0; i < currentNotes.length; i++) {
 		if (currentNotes[i].includes("README")) continue
 		noteText = fs.readFileSync("notes/"+currentNotes[i],'utf8')
@@ -53,16 +56,14 @@ router.get('/getNotes', function(req,res,next) {
 	res.send(notes)
 })
 
-// https://stackoverflow.com/a/37318012
 function newID() {
-	var str = ''
-	var chars ='0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz'.split(
-		'')
-	var charsLen = chars.length
-	for (var i = 0; i < 10; i++) {
-		str += chars[~~(Math.random() * charsLen)]
-	}
-	return str
+	return (new Date()).toISOString().replace(/[^0-9]/g, "")
+}
+
+function dateSort(a,b) {
+	aVal = parseInt(a.split("-").pop())
+	bVal = parseInt(b.split("-").pop())
+	return aVal - bVal
 }
 
 // https://stackoverflow.com/a/26482552
