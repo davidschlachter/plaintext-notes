@@ -34,4 +34,16 @@ body {
 	border: solid 1px black;
 	margin: 1em 0 0 0;
 	padding: 0 1em 0 1em;
+	position: relative;
+}
+.edit {
+	position: absolute;
+	right: 0;
+	top: 0;
+	padding: 0.5em;
+	background-color: #ddd;
+}
+.edit:hover {
+	background-color: #aaa;
+	cursor: pointer;
 }
