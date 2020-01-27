@@ -63,7 +63,7 @@ function newID() {
 function dateSort(a,b) {
 	aVal = parseInt(a.split("-").pop())
 	bVal = parseInt(b.split("-").pop())
-	return aVal - bVal
+	return bVal - aVal
 }
 
 // https://stackoverflow.com/a/26482552
