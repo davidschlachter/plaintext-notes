@@ -30,7 +30,7 @@ router.post('/updateNote', function(req, res, next) {
 
 	fs.writeFileSync("notes/"+noteTitle+"-"+newNoteID, noteText)
 
-	res.redirect('/')
+	res.redirect('index.html')
 })
 
 router.post('/deleteNote', function(req, res, next) {
