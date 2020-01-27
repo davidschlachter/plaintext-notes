@@ -35,6 +35,22 @@ router.post('/deleteNote', function(req, res, next) {
 })
 
 router.get('/getNotes', function(req,res,next) {
+	let currentNotes = fs.readdirSync('notes/')
+
+	let notes = []
+	let noteTitle = ""
+	let noteText  = ""
+	let noteID    = ""
+
+	for (let i = 0; i < currentNotes.length; i++) {
+		if (currentNotes[i].includes("README")) continue
+		noteText = fs.readFileSync("notes/"+currentNotes[i],'utf8')
+		noteTitle= currentNotes[i].split("-").slice(0, currentNotes[i].split("-").length - 1).join("-")
+		noteID   = currentNotes[i].split("-").pop()
+		notes.push({"noteText":noteText, "noteTitle":noteTitle, "noteID":noteID})
+	}
+	
+	res.send(notes)
 })
 
 // https://stackoverflow.com/a/37318012
