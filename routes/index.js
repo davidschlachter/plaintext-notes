@@ -30,7 +30,7 @@ router.post('/updateNote', function(req, res, next) {
 
 	fs.writeFileSync("notes/"+noteTitle+"-"+newNoteID, noteText)
 
-	res.sendStatus(200)
+	res.redirect('/')
 })
 
 router.post('/deleteNote', function(req, res, next) {
@@ -52,7 +52,7 @@ router.get('/getNotes', function(req,res,next) {
 		noteText = fs.readFileSync("notes/"+currentNotes[i],'utf8')
 		noteTitle= currentNotes[i].split("-").slice(0, currentNotes[i].split("-").length - 1).join("-")
 		noteID   = currentNotes[i].split("-").pop()
-		notes.push({"noteID":noteID, "noteTitle":noteTitle, "noteText":noteText})
+		notes.push({"noteID":noteID, "noteTitle":noteTitle, "noteText":sanitize(noteText)})
 	}
 	console.log(" Sending notes:"); for (let i = 0; i < notes.length; i++) {console.log(notes[i].noteID+" "+notes[i].noteTitle)}
 	
@@ -86,7 +86,20 @@ function removeSpecials(str) {
 		if(lower[i] != upper[i] || lower[i].trim() === '')
 			res += str[i]
 		}
-	return res.replace(" ","-").toLowerCase()
+	return res.replace(/ /g,"-").toLowerCase()
+}
+
+function sanitize(string) {
+	const map = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#x27;',
+		"/": '&#x2F;',
+	};
+	const reg = /[&<>"'/]/ig;
+	return string.replace(reg, (match)=>(map[match]));
 }
 
 module.exports = router
