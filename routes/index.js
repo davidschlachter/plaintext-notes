@@ -18,11 +18,13 @@ router.post('/updateNote', function(req, res, next) {
 	console.log("oldNoteID: "+oldNoteID)
 
 	let currentNotes = fs.readdirSync('notes/')
-	for (let i = 0; i < currentNotes.length; i++) {
-		if (currentNotes[i].includes(oldNoteID)) {
-			// TODO: if note name contains "../", path traversal may be possible
-			console.log("Removing stale note: notes/"+currentNotes[i])
-			fs.unlinkSync("notes/"+currentNotes[i])
+	if (oldNoteID) {
+		for (let i = 0; i < currentNotes.length; i++) {
+			if (currentNotes[i].includes(oldNoteID)) {
+				// TODO: if note name contains "../", path traversal may be possible
+				console.log("Removing stale note: notes/"+currentNotes[i])
+				fs.unlinkSync("notes/"+currentNotes[i])
+			}
 		}
 	}
 
@@ -50,33 +52,41 @@ router.get('/getNotes', function(req,res,next) {
 		noteText = fs.readFileSync("notes/"+currentNotes[i],'utf8')
 		noteTitle= currentNotes[i].split("-").slice(0, currentNotes[i].split("-").length - 1).join("-")
 		noteID   = currentNotes[i].split("-").pop()
-		notes.push({"noteText":noteText, "noteTitle":noteTitle, "noteID":noteID})
+		notes.push({"noteID":noteID, "noteTitle":noteTitle, "noteText":noteText})
 	}
+	console.log(" Sending notes:"); for (let i = 0; i < notes.length; i++) {console.log(notes[i].noteID+" "+notes[i].noteTitle)}
 	
 	res.send(notes)
 })
 
 function newID() {
-	return (new Date()).toISOString().replace(/[^0-9]/g, "")
+	let rightNow = new Date()
+	return rightNow.toISOString().replace(/\.[0-9][0-9]*Z/, "").replace(/[^0-9]/g, "")
 }
 
 function dateSort(a,b) {
 	aVal = parseInt(a.split("-").pop())
 	bVal = parseInt(b.split("-").pop())
-	return bVal - aVal
+	if (bVal - aVal > 0) {
+		return 1
+	} else if (bVal - aVal < 0) {
+		return -1
+	} else {
+		return 0
+	}
 }
 
 // https://stackoverflow.com/a/26482552
 function removeSpecials(str) {
-	var lower = str.toLowerCase();
-	var upper = str.toUpperCase();
+	var lower = str.toLowerCase()
+	var upper = str.toUpperCase()
 
-	var res = "";
+	var res = ""
 	for(var i=0; i<lower.length; ++i) {
 		if(lower[i] != upper[i] || lower[i].trim() === '')
-			res += str[i];
+			res += str[i]
 		}
-	return res;
+	return res.replace(" ","-").toLowerCase()
 }
 
 module.exports = router
