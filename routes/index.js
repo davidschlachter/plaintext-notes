@@ -50,6 +50,8 @@ router.get('/getNotes', function(req,res,next) {
 	for (let i = 0; i < currentNotes.length; i++) {
 		if (currentNotes[i].includes("README")) continue
 		if (currentNotes[i].includes(".stfolder")) continue
+		if (currentNotes[i].includes(".stignore")) continue
+		if (currentNotes[i].includes(".stglobalignore")) continue
 		noteText = fs.readFileSync("notes/"+currentNotes[i],'utf8')
 		noteTitle= currentNotes[i].split("-").slice(0, currentNotes[i].split("-").length - 1).join("-")
 		noteID   = currentNotes[i].split("-").pop()
